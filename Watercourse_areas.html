@@ -1,0 +1,752 @@
+
+
+
+
+  
+
+
+
+
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+	
+	
+	<html lang="en">
+<head>
+</head>
+<body>
+	<div id="gptMainWrap">
+		<div id="gptBody">
+			
+			<table id="cmPlPgdPageBody" class="pageBody" cellpadding="0" cellspacing="0" summary="This table is for design purposes only.">
+<tbody>
+<tr>
+<td><span id="cmPlPgpPageBody">
+					
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  var gptMapConfig = new GptMapConfig();
+  gptMapConfig.mapServiceURL = "https://server.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer";
+  gptMapConfig.mapServiceType = "dynamic";
+  gptMapConfig.geometryServiceURL = "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/Utilities/Geometry/GeometryServer";
+  gptMapConfig.locatorURL = "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/Location/QldCompositeLocator/GeocodeServer";
+  gptMapConfig.locatorSingleFieldParameter = "SingleLine";
+  gptMapConfig.locatorGraphicURL = "/catalogue/catalog/images/pushpin_red.gif";
+  gptMapConfig.mapVisibleLayers = "[]";
+</script>
+
+
+<form id="mdDetails" name="mdDetails" method="post" action="/catalogue/custom/viewMetadataDetails.page;jsessionid=C1A27963BDF94F522A1DF23DFD5EEF1A" class="mdDetails" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="mdDetails" value="mdDetails" />
+
+
+<script type="text/javascript">
+
+function MddMap() {
+  var _gptMap = null;
+  var _gptInpEnv = null;
+  
+  this.initialize = function initialize() {
+    var config = gptMapConfig;
+    config.mapElementId = "interactiveMap";
+    config.mapToolbarId = "mdDetails:mapToolbar";
+        
+    var elForm = mddFindForm();
+    if ((elForm != null) && (typeof(mdeEnvelopeIds) != 'undefined') && (mdeEnvelopeIds != null)) {
+      var sPfx = elForm.id+":";
+      config.inputEnvelopeXMinId = sPfx+mdeEnvelopeIds[0];
+      config.inputEnvelopeYMinId = sPfx+mdeEnvelopeIds[1];
+      config.inputEnvelopeXMaxId = sPfx+mdeEnvelopeIds[2];
+      config.inputEnvelopeYMaxId = sPfx+mdeEnvelopeIds[3];
+      var el = document.getElementById(config.inputEnvelopeXMinId);
+      if (el != null) el.value = el.innerHTML;
+      el = document.getElementById(config.inputEnvelopeYMinId);
+      if (el != null) el.value = el.innerHTML;
+      el = document.getElementById(config.inputEnvelopeXMaxId);
+      if (el != null) el.value = el.innerHTML;
+      el = document.getElementById(config.inputEnvelopeYMaxId);
+      if (el != null) el.value = el.innerHTML;
+    }
+      
+    _gptMap = new GptMap();
+    dojo.connect(_gptMap,"onMapLoaded",this,"onMapLoaded");
+
+    _gptInpEnv = new GptInputEnvelope();
+    _gptInpEnv.initialize(config,_gptMap);
+
+    _gptMap.initialize(config);
+  }
+
+  this.onMapLoaded = function() {
+      if (_gptInpEnv != null) {
+        _gptInpEnv.highlightInputEnvelope();
+        setTimeout(dojo.hitch(_gptInpEnv,"zoomToInputEnvelope"),1000);
+        _gptMap.getAgsMap().disableMapNavigation();
+        _gptMap.getAgsMap().disablePan();
+        _gptMap.getAgsMap().disableClickRecenter();
+        _gptMap.getAgsMap().disableDoubleClickZoom();
+        _gptMap.getAgsMap().disableRubberBandZoom();
+        _gptMap.getAgsMap().disableScrollWheelZoom();
+        _gptMap.getAgsMap().disableShiftDoubleClickZoom();
+        _gptMap.getAgsMap().hidePanArrows();
+        _gptMap.getAgsMap().hideZoomSlider();
+      }
+  }
+  
+  this.reposition = function reposition() {
+    if (_gptMap != null) _gptMap.reposition();
+  }
+};
+
+
+function mddFindForm(sBaseName) {
+  var elForm = null;
+  var aForms = document.getElementsByTagName("form");
+  if (aForms != null) {
+    if (sBaseName == null) sBaseName = "mdDetails";
+    for (var i=0;i<aForms.length;i++) {
+      var el = aForms[i];
+      if (el && el.id && (el.id.indexOf(sBaseName) != -1)) {
+        elForm = el;
+        break;
+      }
+    }
+  }
+  return elForm;
+};
+
+
+var mddMap = new MddMap();;
+if (typeof(dojo) != 'undefined') {
+  dojo.addOnLoad(mddMapInit);
+}
+
+function mddMapInit() {
+  var toolbar = dojo.byId("mdDetails:mapToolbar");
+  if (toolbar!=null) toolbar.style.display="none";
+  var elMap = document.getElementById("interactiveMap");
+  if (elMap != null) mddMap.initialize();
+  dojo.connect(window,"onresize",mddMap,"reposition");
+};
+
+
+function mddOnSectionClicked(sSectionId) {
+  var elForm = mddFindForm();
+  if (elForm != null) {
+    var bDisplay = true;
+    var sFolder = "/catalogue/catalog/images/";
+    var sSrc = sFolder+"section_open.gif";
+    var elImg = document.getElementById(elForm.id+":"+sSectionId+"-img");
+    if (elImg != null) {
+      if (elImg.src.indexOf("section_open.gif") != -1) {
+        sSrc = sFolder+"section_closed.gif";
+        bDisplay = false;
+      }
+      elImg.src = sSrc;
+      var elChk = document.getElementById(elForm.id+":"+sSectionId+"-chk");
+      if (elChk != null) elChk.checked = bDisplay;
+    }
+    var el = document.getElementById(elForm.id+":"+sSectionId+"-body");
+
+	if (el != null) {
+	  if (bDisplay) el.style.display = "block"; else el.style.display = "none";
+	  mddMap.reposition();
+	}      
+  }
+}
+
+</script>
+
+
+<span id="mdDetails:xsltBasedDetails"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>Watercourse areas - Queensland</title><meta content="text/html; charset=UTF-8" http-equiv="Content-type"/><style type="text/css">
+                            h1{
+                                font-family:Arial, Verdana, Helvetica, sans-serif;
+                                font-weight:bold;
+                                color:#333333;
+                                font-size:140%;
+                                border-bottom:2px solid #CCCCCC;
+                            }
+                            h2{
+                                font-family:Arial, Verdana, Helvetica, sans-serif;
+                                font-weight:bold;
+                                color:#333333;
+                                font-size:120%;
+                            }
+                            h3{
+                                font-family:Arial, Verdana, Helvetica, sans-serif;
+                                font-weight:bold;
+                                color:#333333;
+                                font-size:110%;
+                            }
+                            
+                            body{
+                                font-family:Verdana, Arial, Helvetica, sans-serif;
+                                font-size:10pt;
+                                line-height:16pt;
+                                color:#333333;
+                                padding-right:10%;
+                            }
+                            
+                            em{
+                                font-family:Arial;
+                                font-style:normal;
+                                font-weight:bold;
+                            }
+                            em.rawContent{
+                                font-style:normal;
+                                font-weight:bold;
+                                font-style:italic;
+                            }
+                            
+                            div{
+                                padding-left:40px;
+                                margin-top:0;
+                                margin-bottom:0;
+                            }</style></head><body><h1>Watercourse areas - Queensland</h1><h2 class="headTitle">Identification</h2><div>
+                                
+                <em>Title
+            : 
+        </em>Watercourse areas - Queensland<br/><em>Alternative title
+            : 
+        </em>Watercourse areas<br/><em>Date
+            : 
+        </em>
+                                                                
+                                2026-11-01
+                                                            
+                            
+             (
+            publication
+            ) 
+        <br/>
+                                                
+                        <em>Presentation form code
+                : 
+            </em>mapDigital<br/>
+                                            
+                    
+                            
+            
+                                                                                
+                                        <em>Online resource:</em><div><em>Website: </em><a href="https://www.resources.qld.gov.au/data-mapping"><small>https://www.resources.qld.gov.au/data-mapping</small></a><br/></div>
+                                                                            
+                                    
+                                        										
+                                        <em>Online resource:</em><div><em>Website: </em></div>
+                                        									
+                                    <em>Related resource:</em><div><em>Identifier: </em>nat.Water_waterbodyareas<br/><em>Relationship to related resource
+                : 
+            </em>source<br/></div></div><h2 class="headTitle">Description</h2><div><em>Abstract / Description: </em><div>This topographic dataset is a subset of the feature class Waterbody Areas. This dataset displays both natural and constructed waterbodies (generally greater than 625m2) within the State of Queensland.</div><em>Purpose: </em><div>This Queensland wide dataset provides generalised information for topographical mapping purposes. To provide digital data displaying both natural and constructed waterbodies (generally greater than 625 m2) within the State of Queensland. The primary objective of this dataset is to provide a cartographic portrayal of Queensland's natural and constructed features and should be interpreted and utilised correctly. It is suitable for use in land administration, emergency management, topographic mapping and in the production of web based mapping applications.</div><em>Additional Information: </em><div>The watercourse area feature is shown when a watercourse exceeds a set width and is dependant on scale of the data. ( e.g. for 25000 data, watercourses that are greater than 30 metres will be shown as a watercourse area. For 50000 data, it will be those watercourses greater than 60 metres wide) A sub-type of connector flows through waterbodies to create a linear network for hydrological modelling. The Watercourse lines - Queensland dataset and the Canal lines - Queensland dataset together form the states drainage network.<br/><br/>Features within this dataset have been captured or updated from the best available imagery with an attribute within the data describing the source and reliability. Data sources include but not limited to: <br/>- Queensland Orthophotography <br/>- Queensland Place Names Database <br/>- Queensland Topographic, Cadastral and Historic Mapping <br/>- Satellite Imagery <br/>- Geoscience Australia 100000 and 250000 Topographic Data <br/><br/>Feature Types: <br/>- LAKE – A considerable inland body of standing water <br/>- FLAT - Those areas that are inundated or saturated by surface or groundwater at a frequency and duration sufficient to support, and that under normal circumstances do support, a prevalence of vegetation typically adapted for life in saturated soil conditions <br/>WATERCOURSE AREA - A wide water channel (generally wider than 30 metres) along which water may flow from time to time. <br/>Functions: <br/>- CANAL ESTATE - A man-made water area feature that is constructed as part of a residential development and is used for recreational functions and marine navigation <br/>- DRAINAGE CHANNEL – A wide constructed watercourse designed for removing surplus water from the lands surface. <br/>- ESTUARY – The part of the mouth or lower course of a river in which its currents meet the sea’s tides, and is subject to their effects <br/>- FLOOD IRRIGATION STORAGE - A body of water collected and stored behind constructed barriers, for the specific use of flooding pastures via internal irrigation systems <br/>- INDUSTRIAL WATER STORAGE – A body of water collected and stored behind constructed barriers, for the specific use by an industrial complex. <br/>- IRRIGATION CHANNEL – A wide constructed watercourse used for irrigation and or directing water from one area to another. <br/>- LAND SUBJECT TO INUNDATION - Low lying land usually adjacent to lakes or watercourses, which is regularly covered with flood water for short periods. <br/>- MARINE SWAMP - That low-lying part of the backshore area of tidal waters, usually immediately behind saline coastal flats, which maintains a high saltwater content, and is covered with characteristic thick grasses and reed growths. <br/>- ORNAMENTAL LAKE – A man-made permanent waterbody constructed within parks and gardens which have been carved out of the landscape for aesthetic purposes <br/>- RAPFIS AREA - Portions of a wide watercourse with accelerated current where it descends rapidly without a break in the slope of the bed sufficient to form a waterfall. <br/>- RURAL WATER STORAGE – A body of water stored for rural farming and agricultural practices (except for Flood Irrigation Storage) and/or for the consumption of the associated landowners. The water is not treated by government authorities or connected to government regulated water networks <br/>- SALINE COASTAL FLAT - That nearly level tract of land between mean high water and the line of the highest astronomical tide. <br/>- SPILLWAY AREA - A wide constructed path or channel for excess water to pass over or beside a dam <br/>- SWAMP - Land which is so saturated with water that it is not suitable for agricultural or pastoral use and presents a barrier to free passage. <br/>- TOWN WATER STORAGE - A body of water collected and stored behind a constructed barrier for some specific use (except for Flood Irrigation Storage). Town Water Storage are bodies of water primarily stored for the consumption of urban, semi-urban and rural township populations. The water is treated post storage by government, or private authorities, and connected to government regulated water networks. <br/>- WATER SUPPLY CHANNEL – A wide constructed watercourse designed for the movement of water used in an urban or rural water supply network Attributes: <br/>FEATURE_TYPE (Feature Type) - Unique feature type that identifies the type of feature. (options: Lake, Flat, Watercourse Area) <br/>ORIGIN (Origin) - Indicates whether the feature is constructed or natural. (options: Artificial (not used for waterbody points), Constructed, Natural) <br/>FUNCTION (Function) - Indicates the function of the feature (options: Canal Estate, Drainage Channel, Estuary, Flood Irrigation Storage, Industrial Water Storage, Irrigation Channel, Land Subject to Inundation, Marine Samp, Natural Lake, Natural Watercourse, Ornamental Lake, Rapids Area, Rural Water Storage, Saline Coastal Flat, Swamp, Town Water Storage, Water Supply Channel) <br/>NAME (Name) - The name of the feature (if available) <br/>ALTERNATE_NAME (Alternate Name) - An alternate name of the feature if available from the Queensland Place Names Database, otherwise left blank. <br/>QLD_PNDB_ID (Qld PNDB ID) - Queensland Place Names Database unique identifier <br/>ATTRIBUTE_SOURCE (Attribute Source) - The source map or data where the name of the feature was obtained from. <br/>ATTRIBUTE_DATE (Attribute Date) - Date of the source map or data where the name of the feature was obtained from. <br/>ADDITIONAL_NAMES (Additional Names) - Other names of the feature if not recorded in the Queensland Place Names Database. Maybe commonly known by other names or have different spelling. Multiple names can be shown, separated by a comma. <br/>ADD_NAMES_SOURCE (Additional Names Source) - The source map or data that the additional names of the feature were obtained from. Multiple sources can be shown, separated by a comma. If multiple sources are shown, the written sequence will be the same as the written sequence of the names themselves. <br/>FEATURE_SOURCE (Feature Source) - The source imagery, map, or data that the spatial location and shape of the of the feature was obtained from. <br/>FEATURE_DATE (Feature Date) - Date of the source imagery, map, or data that the spatial location and shape of the feature was obtained from. <br/>PERENNIALITY (Perenniality) - An indicator of the temporal continuity of the presence of water (options: Ephemeral, Intermittent, Near Permanent, Perennial, Unknown, Not Applicable)<br/>HIERARCHY (Hierarchy) - An attribute defining the Importance of a hydrographic feature in relation to the entire hydrographic network (options: Major, Minor, Not Applicable)<br/>DRAINAGE_BASIN (Drainage Basin) - The name of the drainage basin the feature is in. <br/>PFI (PFI) - A Persistent Feature Identifier (PFI) is generated once for each feature at the point of creation. The value of the PFI will stay with the feature through all changes to the feature (both spatial and non-spatial) until the feature is retired. <br/>UFI (UFI) - A Unique Feature Identifier (UFI) is generated once for each new feature at the point of creation (at this point the PFI and UFI will be the same). The value of the UFI will stay with the feature through all changes to the feature (both spatial and non-spatial) unless the feature is split into multiple other parts. If the feature is split, the separate parts will retain the original PFI but new UFI’s will be generated for the split parts. <br/>DIMENSION_M2 (Dimension (m2)) - The area of the feature measures in square meters GDA2020.<br/>UPPER_SCALE (Upper Scale) - The upper scale for which the feature should be considered suitable <br/>TEXT_NOTE (Text Note) - For mapping purposes. Additional annotation that can be shown on a map. <br/>ADD_INFORMATION (Additional Information) - A comment field (additional information) <br/><br/>This dataset is stored in an ESRI Geodatabase. <br/>Some columns names may be shortened if downloaded in the ESRI shape format.</div><em>Language
+            : 
+        </em>eng<br/><em>Character set
+            : 
+        </em>unknown<br/></div><h2 class="headTitle">Topic</h2><div><em>ISO topic category codes: </em>inlandWaters<br/></div><h2 class="headTitle">Spatial Data Information</h2><div>
+                                
+                <em>Spatial representation type
+                : 
+            </em>vector<br/>
+                            
+            
+                        
+            <em>Coordinate Reference System EPSG code: </em>EPSG:7844<br/><div><em>Title
+            : 
+        </em>EPSG Geodetic Parameter<br/>                                Dataset<br/><em>Date
+            : 
+        </em>
+                                                                                
+                                        2007-07-16
+                                                                            
+                                    
+             (
+            revision
+            ) 
+        <br/><em>Edition
+            : 
+        </em>Version 6.13<br/></div>
+                    
+        </div><h2 class="headTitle">Contacts</h2><div><em>Point of contact
+                : 
+            </em><br/><div><em>Organisation
+            : 
+        </em>Department of Natural Resources and Mines, Manufacturing and Regional and Rural Development<br/>
+                                                
+                        <em>Address:</em><br/><div>
+                                                                        
+                                    <em>Delivery point
+            : 
+        </em>1 William Street<br/>
+                                                                        
+                                    <em>City
+            : 
+        </em>Brisbane<br/>
+                                                                        
+                                    <em>State
+            : 
+        </em>Queensland<br/>
+                                                                        
+                                    <em>Postcode
+            : 
+        </em>4000<br/>
+                                                                        
+                                    <em>Country
+            : 
+        </em>Australia<br/>
+                                                                        
+                                    <em>Email: </em>
+             <a href="mailto:
+            opendata@nrmmrrd.qld.gov.au
+            ">
+            opendata@nrmmrrd.qld.gov.au
+            </a> 
+        
+                                                                    
+                                </div>
+                                            
+                    </div><em>Owner
+                : 
+            </em><br/><div><em>Organisation
+            : 
+        </em>Department of Natural Resources and Mines, Manufacturing and Regional and Rural Development<br/></div></div><h2 class="headTitle">Status</h2><div>
+                                
+                <em>Progress status
+                : 
+            </em>onGoing<br/>
+                            
+            
+                                                
+                        <em>Maintenance and update frequency
+                : 
+            </em>continual<br/>
+                                            
+                    </div><h2 class="headTitle">Data / Resource Constraints</h2><div><em>Resource Access Level
+                            :
+                        </em>
+                                                 --&gt;
+                        
+                        
+                                            
+                    <div>
+                                                
+                        <em>Security classification (ISO 19115)
+                : 
+            </em>unclassified<br/>
+                                            
+                    </div><em>Copyright
+                : 
+            </em> (as use constraint)<br/><div>&copy The State of Queensland 2025</div><em>Licence
+                : 
+            </em> (as use constraint)<br/><div>This material is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/ ">Creative Commons - Attribution 4.0 International</a> licence.<br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/ "><img alt="Creative Commons License" title="Creative Commons - Attribution 4.0 International License" style="border: 0;" src="https://licensebuttons.net/l/by/4.0/88x31.png " /></a><br /> The Department of Natural Resources and Mines, Manufacturing and Regional and Rural Development requests attribution in the following manner:<br /> &copy The State of Queensland 2025</div></div><h2 class="headTitle">Temporal and Spatial extents:</h2><div>
+                                
+                
+                                        
+                    
+                                                
+                        <em>Bounding box: </em><div><em>West bounding longitude
+            : 
+        </em>138.000<br/><em>East bounding longitude
+            : 
+        </em>155.000<br/><em>South bounding latitude
+            : 
+        </em>-29.500<br/><em>North bounding latitude
+            : 
+        </em>-10.000<br/></div>
+                                            
+                    
+                                        
+                    
+                    
+                    <em>Temporal extent: </em><div>
+                                                        
+                            <em> Start: </em> 2009-01-01<em> End: </em> 2026-11-01<br/>
+                                                    
+                        </div>
+                                    
+                
+                            
+            </div><h2 class="headTitle">Data Quality</h2><div>
+                        
+            
+                                
+                <em>Data quality scope:</em><div>
+                                        
+                    
+                                                
+                        <em>Level
+                : 
+            </em>dataset<br/>
+                                            
+                    
+                                        
+                
+                </div>
+                            
+            
+                        
+            
+                                
+                <em>Completeness (omission):</em><div>
+                                        
+                    
+                                                
+                        <br/>                                                                <br/>                                The collection of feature types will be complete.<br/>                                                            <br/>                            
+                                            
+                    
+                                    
+                </div>
+                            
+            
+                        
+            
+                                
+                <em>Consistency (conceptual):</em><div>
+                                        
+                    
+                                                
+                        <br/>                                                                <br/>                                Data should be free from overshoots, undershoots, duplicate lines and agree with topographic data product description requirements with a 5% error status<br/>                                                            <br/>                            
+                                            
+                    
+                                    
+                </div>
+                            
+            
+                        
+            
+                                
+                <em>Positional accuracy (external, absolute):</em><div>
+                                        
+                    
+                                                
+                        <br/>                                                                <br/>                                The horizontal positional accuracy of the data that has been used to compile this dataset is as follows: Orthophotography +/- 1m, Satellite Imagery +/- 2.5m, Geoscience Australia 1:250000 Data +/- 20m.<br/>                                                            <br/>                            
+                                            
+                    
+                                    
+                </div>
+                            
+            
+                        
+            
+                                
+                <em>Attribute accuracy (non quantitative):</em><div>
+                                        
+                    
+                                                
+                        <br/>                                                                <br/>                                Attribution is completed and agrees with topographic data product description requirements.<br/>                                                            <br/>                            
+                                            
+                    
+                                    
+                </div>
+                            
+            
+                        
+            
+            
+            
+            
+            
+                                
+                <h2 class="headTitle">History:</h2><div>
+                                        
+                    <em>Lineage statement:</em><div>The original data that this dataset has been compiled from was scanned from topographic repromats, captured by photogrammetry, digitised from satellite imagery or orthophotography or taken from Geoscience Australia 250000 topographic datasets with reliability dates ranging from 1978 to 2005. <br/>						<br/>						This original data has been spatially updated between 2010 and the start of 2014 using the best available imagery over the area, 10cm - 60cm orthophotography along much of the east coast to 2.5m satellite imagery over the interior, the Gulf of Carpentaria and Cape York Peninsula. <br/>						<br/>						Original data is compared to current imagery and updated (moved to correct position, deleted as the feature no longer exits or added as the feature is new). Features have been attributed with name and name source where available. As part of the collaborative agreement between the Queensland Government and Geoscience Australia, both organisations undertook to update the features within allocated drainage basins. <br/>						<br/>						Those drainage basins updated by the Queensland Government were updated using Microstation Geographics V8 in MGA94 (GDA94) before the data was transformed to Latitude/Longitude (GDA94). Geoscience Australia undertook their update process using ESRI ArcGIS V9 or V10. <br/>						<br/>						The Queensland Government was responsible for merging all basins into a whole of state dataset stored within an ESRI Geodatabase. This dataset is GDA2020 Compliant. The source data, and therefore the captured features, were captured as GDA94 (horizontal only). <br/>						<br/>						This data has been projected to GDA2020 by using ArcGIS Pro geoprocessing tool Project geoprocessing. Using geographic transformation parameters ‘GDA94 to GDA2020 NTv2 3 Conformal’. <br/>						<br/>						The data has also been processed to remove any redundant vertices by using ArcGIS Pro’s Simplify Polygon geoprocessing tool. Retain critical points (Douglas-Peucker) method was used for the Simplification Algorithm and a Simplification tolerance of 0.25m. <br/>						<br/>						The data was further processed using an ESRI validation in a Repair Geometry geoprocessing tool and deleting any features with Null geometry.</div>
+                                        
+                    
+                
+                </div>
+                            
+            
+                    
+        </div><h2 class="headTitle">Distribution</h2><div>
+                
+        
+                        
+            
+                                
+                <em>Format(s):</em><div>
+                                        
+                    <em>Name/identifier
+            : 
+        </em>Queensland Spatial Catalogue<br/>
+                                        
+                    
+                                        
+                    <em>Specification
+            : 
+        </em>Download Service<br/>
+                                        
+                    
+                                                
+                        
+                                                                
+                                
+                                                            
+                            
+                                                                
+                                
+                                                                        
+                                    
+                                                                                
+                                        <em>Online resource:</em><div><em>Website: </em><a href="http://qldspatial.information.qld.gov.au/catalogue/"><small>http://qldspatial.information.qld.gov.au/catalogue/</small></a><br/></div>
+                                                                            
+                                    
+                                                                    
+                                
+                                                            
+                            
+                                                                
+                                <em>Ordering information:</em><div><em>Instructions
+            : 
+        </em>Open the Queensland Spatial Catalogue (QSpatial). Select the large SEARCH button and all available records are displayed. Select one of the four filter options provided and then the further options within the filter. The resultant search is then displayed. Select your record and complete the order.<br/></div>
+                                                            
+                            
+                                            
+                    
+                                    
+                </div><br/>
+                            
+            
+                        
+            
+                                
+                <em>Format(s):</em><div>
+                                        
+                    <em>Name/identifier
+            : 
+        </em>WaterCoursesAndBodies<br/>
+                                        
+                    
+                                        
+                    <em>Test specification:</em><div>
+                                                
+                        
+                                            
+                    </div>
+                                        
+                    
+                                                
+                        
+                                                                
+                                
+                                                            
+                            
+                                                                
+                                
+                                                                        
+                                    
+                                                                                
+                                        <em>Online resource:</em><div><em>Protocol
+            : 
+        </em>OGC:WMS-1.3.0-http-get-capabilities<br/><em>Application profile
+            : 
+        </em>Web Map Service version 1.3.0<br/><em>Name/identifier
+            : 
+        </em>34<br/><em>Description
+            : 
+        </em>This service displays inland water features of interest to most Queensland Globe users. They are aimed at informing the user if a natural lake, constructed lake, canal, watercourse, dam, rockpool or rockhole, waterhole, waterfall, flat, swamp or pondage area is present at their location of interest. The information display at relevant scale levels from the extent of Queensland through to land parcel level. The primary objective of this service is to provide a spatial representation of Queensland's water features for topographic mapping, and should be interpreted and utilised accordingly. It is not to replace high precision or engineering mapping. Users are responsible for verifying the data's appropriateness for their intended applications and for any conclusions or actions derived from its use and should seek independent professional advice.<br/><em>Website: </em><a href="https://spatial-gis.information.qld.gov.au/arcgis/services/InlandWaters/WaterCoursesAndBodies/MapServer/WMSServer"><small>https://spatial-gis.information.qld.gov.au/arcgis/services/InlandWaters/WaterCoursesAndBodies/MapServer/WMSServer</small></a><br/></div>
+                                                                            
+                                    
+                                                                    
+                                
+                                                            
+                            
+                                                                
+                                <em>Ordering information:</em><div><em>Fees
+            : 
+        </em>Nil<br/><em>Instructions
+            : 
+        </em>For use in desktop and web applications capable of connecting to Open Geospatial Consortium (OGC) web map service endpoints.<br/>Some clients append request parameters for the service capabilities file so depending on your client in use you may have to remove the parameters when copying the url below.<br/></div>
+                                                            
+                            
+                                            
+                    
+                                    
+                </div><br/>
+                            
+            
+                        
+            
+                                
+                <em>Format(s):</em><div>
+                                        
+                    <em>Name/identifier
+            : 
+        </em>WaterCoursesAndBodies<br/>
+                                        
+                    
+                                        
+                    
+                                                
+                        
+                                                                
+                                
+                                                            
+                            
+                                                                
+                                
+                                                                        
+                                    
+                                                                                
+                                        <em>Online resource:</em><div><em>Protocol
+            : 
+        </em>WWW:LINK-1.0-http--link<br/><em>Application profile
+            : 
+        </em>ArcGIS REST API<br/><em>Name/identifier
+            : 
+        </em>34<br/><em>Description
+            : 
+        </em>This service displays inland water features of interest to most Queensland Globe users. They are aimed at informing the user if a natural lake, constructed lake, canal, watercourse, dam, rockpool or rockhole, waterhole, waterfall, flat, swamp or pondage area is present at their location of interest. The information display at relevant scale levels from the extent of Queensland through to land parcel level. The primary objective of this service is to provide a spatial representation of Queensland's water features for topographic mapping, and should be interpreted and utilised accordingly. It is not to replace high precision or engineering mapping. Users are responsible for verifying the data's appropriateness for their intended applications and for any conclusions or actions derived from its use and should seek independent professional advice.<br/><em>Website: </em><a href="https://spatial-gis.information.qld.gov.au/arcgis/rest/services/InlandWaters/WaterCoursesAndBodies/MapServer"><small>https://spatial-gis.information.qld.gov.au/arcgis/rest/services/InlandWaters/WaterCoursesAndBodies/MapServer</small></a><br/></div>
+                                                                            
+                                    
+                                                                    
+                                
+                                                            
+                            
+                                                                
+                                <em>Ordering information:</em><div><em>Fees
+            : 
+        </em>Nil<br/><em>Instructions
+            : 
+        </em>For use in desktop and web applications capable of connecting to ArcGIS REST map service endpoints.<br/></div>
+                                                            
+                            
+                                            
+                    
+                                    
+                </div><br/>
+                            
+            
+                        
+            
+                                
+                <em>Format(s):</em><div>
+                                        
+                    <em>Name/identifier
+            : 
+        </em>downloadableData<br/>
+                                        
+                    <em>Version
+            : 
+        </em>10.0<br/>
+                                        
+                    <em>Specification
+            : 
+        </em>ESRI ArcGIS Server Geoportal Extension Content Type<br/>
+                                    
+                </div><br/>
+                            
+            
+                        
+            
+                                
+                <em>Distributor:</em><div>
+                                                
+                        
+                                            
+                    
+                                                
+                        <em>Format(s):</em><div>
+                                                        
+                            <em>Name/identifier
+            : 
+        </em>From the Queensland Spatial Catalogue available as ESRI Shape file SHP, MapInfo Tab file TAB, ESRI file geodatabase FGDB, Google file KMZ, and Geopackage version 1.0, 1.1, or 1.2 file GPKG<br/>
+                                                        
+                            
+                                                    
+                        </div><br/>
+                                            
+                    
+                                                
+                        
+                                                        
+                            <em>Transfer size (megabytes)
+            : 
+        </em>16<br/>
+                                                        
+                            
+                                                                
+                                <em>Online resource:</em><div><em>Website: </em><a href="http://qldspatial.information.qld.gov.au/catalogue/custom/search.page?q=%22Watercourse areas - Queensland%22"><small>http://qldspatial.information.qld.gov.au/catalogue/custom/search.page?q=%22Watercourse areas - Queensland%22</small></a><br/></div>
+                                                            
+                            
+                                                        
+                        
+                        
+                                            
+                    </div>
+                            
+            
+                        
+            <em>Transfer options:</em><div>
+                                
+                
+                                        
+                    
+                                                
+                        <em>Online resource:</em><div><em>Website: </em>
+                                                                
+                                <em>Function
+                : 
+            </em>download<br/>
+                                                            
+                            </div>
+                                            
+                    
+                                    
+                
+                            
+            </div>
+                    
+        
+            
+    <br><em>Web Service Finder:</em></br><div><em>Website: </em><a href="&#10;                        http://qldspatial.information.qld.gov.au/catalogue/custom/search.page?q=keywords:&quot;&#10;                        Watercourse areas - Queensland&#10;                        &quot;&amp;contentTypes=liveData&#10;                    ">QSpatial Web Service</a></div><div><em>Instructions: </em>
+                    Use the URL to search QSpatial for web services displaying or using this dataset.
+                
+                </div></div><h2 class="headTitle">Metadata Reference Information</h2><div>
+                
+        <em>Hierarchy level (scope of the metadata)
+                : 
+            </em>dataset<br/>
+            
+    <em>Identifier
+            : 
+        </em>{6EA91DC0-D046-46F0-959D-E5CD231F268D}<br/><em>Parent identifier
+            : 
+        </em>{41CA0D1F-13EF-40F4-BD6C-4587C5B5D006}<br/><em>Metadata date stamp: </em>
+                
+        2018-10-01
+            
+    <br/><em>Language
+            : 
+        </em>eng<br/>
+                
+        <em>Character set
+                : 
+            </em>utf8<br/>
+            
+    <em>Metadata standard name
+            : 
+        </em>ISO 19115:2005, ANZLIC ISO 1.1<br/><em>Metadata version name
+            : 
+        </em>QGIS<br/></div></body></html></span><input type="hidden" name="javax.faces.ViewState" id="javax.faces.ViewState" value="-5395928178136355891:-3028915728650449252" autocomplete="off" />
+</form>
+  <!--iframe class="section" src="/catalogue/rest/document?f=html&id=%7B6EA91DC0-D046-46F0-959D-E5CD231F268D%7D" width="100%" scrolling="no" frameborder="0"></iframe>
+  //<span class="note">/catalogue/rest/document?f=html&id=%7B6EA91DC0-D046-46F0-959D-E5CD231F268D%7D</span-->
+</span></td>
+</tr>
+</tbody>
+</table>
+
+		</div>
+	</div>
+</body>
+	</html>
+
+
+

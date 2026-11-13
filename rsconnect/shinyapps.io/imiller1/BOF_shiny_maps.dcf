@@ -1,0 +1,12 @@
+name: BOF_shiny_maps
+title: BOF_shiny_maps
+username: imiller1
+account: imiller1
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 18425181
+bundleId: 12816411
+url: https://imiller1.shinyapps.io/BOF_shiny_maps/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
